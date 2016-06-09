@@ -1,26 +1,41 @@
 angular.module('starter.services', [])
 
-/**
- * A simple example service that returns some data.
- */
-.factory('PetService', function() {
-  // Might use a resource here that returns a JSON array
+.factory('OpenTabsFactory', function() {
 
-  // Some fake testing data
-  var pets = [
-    { id: 0, title: 'Cats', description: 'Furry little creatures. Obsessed with plotting assassination, but never following through on it.' },
-    { id: 1, title: 'Dogs', description: 'Lovable. Loyal almost to a fault. Smarter than they let on.' },
-    { id: 2, title: 'Turtles', description: 'Everyone likes turtles.' },
-    { id: 3, title: 'Sharks', description: 'An advanced pet. Needs millions of gallons of salt water. Will happily eat you.' }
-  ];
+  var openTabs = [];
 
   return {
     all: function() {
-      return pets;
+      return openTabs;
     },
-    get: function(petId) {
-      // Simple index lookup
-      return pets[petId];
+    add: function(openTab) {
+      openTabs.push(openTab);
+    },
+    remove: function(openTab) {
+      openTabs.splice(openTabs.indexOf(openTab), 1);
+    },
+    get: function(tabID) {
+      for (var i = 0; i < openTabs.length; i++) {
+        if (openTabs[i].id === parseInt(tabID)) {
+          return openTabs[i];
+        }
+      }
+      return null;
     }
-  }
-});
+  };
+})
+
+.factory('SMoKEAPIservice', function($http) {
+
+
+    getItemDetails = function(id) {
+      return $http({
+        method: 'GET',
+        url: 'http://192.168.1.189:8080/id?id=' + id
+      });
+    }
+
+    return{
+      getItemDetails: getItemDetails, //Comma?
+    }
+  });

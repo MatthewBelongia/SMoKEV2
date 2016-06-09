@@ -1,0 +1,10 @@
+<ion-view view-title="Specials">
+  <ion-content>
+    <ion-item ng-repeat="special in specials" type="item-text-wrap">
+      <h2>{{special.title}}</h2>
+      <p>
+        {{special.amount}}%
+      </p>
+    </ion-item>
+  </ion-content>
+</ion-view>

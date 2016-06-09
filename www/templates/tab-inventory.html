@@ -1,0 +1,14 @@
+<ion-view view-title="Inventory">
+  <ion-content>
+    <ion-list>
+      <ion-item ng-repeat="item in inventory">
+        <div class="item item-divider">
+          {{item.name}}
+        </div>
+        <div class="row">
+          <div class="col-75">Price: ${{item.price}}</div>
+         <div class="col">Qty: {{item.quantity}}</div>
+        </div>
+      </ion-item>
+  </ion-content>
+</ion-view>

@@ -1,6 +1,22 @@
 angular.module('starter.billController', [])
 
-.controller('BillCtrl', function($scope, $stateParams, OpenTabsFactory, $ionicPopover, $http, SMoKEAPIservice,$ionicPopup) {
+
+
+.controller('BillCtrl', function($scope, $stateParams, OpenTabsFactory, $ionicPopover, $http, SMoKEAPIservice,$ionicPopup,ScannedItemService) {
+
+console.log("getScanneditem: " + ScannedItemService.getScannedItem());
+document.getElementById("scaninput")
+    .addEventListener("keyup", function(event) {
+    event.preventDefault();
+    if (event.keyCode == 13) {
+        var input = document.getElementById("scaninput").value;
+        ScannedItemService.setScannedItem(input);
+        console.log("getScanneditem: " + ScannedItemService.getScannedItem());
+
+        document.getElementById("scannerbutton").click();
+    }
+    });
+
   $scope.openTab = OpenTabsFactory.get($stateParams.tabID);
   console.log($scope.openTab);
   $scope.id = '';
@@ -21,6 +37,7 @@ angular.module('starter.billController', [])
     }
 
   $scope.showPopup = function() {
+
     $scope.data = {};
 
 
@@ -28,7 +45,7 @@ angular.module('starter.billController', [])
     var myPopup = $ionicPopup.show({
 
 
-      template: '<input type="number" ng-model="data.scanned" autofocus/>',
+      template: '<input type="tel" id="scannerbox" ng-model="data.scanned"  autofocus/>',
       title: 'Scan Item',
       scope: $scope,
       buttons: [
@@ -36,37 +53,73 @@ angular.module('starter.billController', [])
       {
         text: '<b>Ok</b>',
         type: 'button-positive',
+
         onTap: function(e) {
 
+          alert("input is: " + $scope.data.scanned);
           $scope.id = $scope.data.scanned;
           SMoKEAPIservice.getItemDetails($scope.id).then(function successCallback(response) {
-      //Digging into the response to get the relevant data
-      $scope.item = response;
-      console.log(response);
-      console.log("openTab.bill: " + $scope.openTab.bill);
-      $scope.openTab.bill.push($scope.item);
-      /*
-      for(let sub of $scope.openTab.bill){
-      calcTotal += item.data.cost;
-      */
-   
-      //$scope.subtotal = calcTotal;
-      
-    }, function errorCallback(response) {})
-          console.log($scope.data.scanned);
-          console.log($scope.id);
-          return $scope.id;
-        }
+          //Digging into the response to get the relevant data
+          $scope.item = response;
+          console.log(response);
+          console.log("openTab.bill: " + $scope.openTab.bill);
+          $scope.openTab.bill.push($scope.item);
+          /*
+          for(let sub of $scope.openTab.bill){
+          calcTotal += item.data.cost;
+          */
+       
+          //$scope.subtotal = calcTotal;
+          
+        }, function errorCallback(response) {})
+              alert(response);
+              alert("item not found");
+              console.log($scope.data.scanned);
+              console.log($scope.id);
+              return $scope.id;
+            }
+          }
+          ]
+        });
+        return $scope.id;
       }
-      ]
-    });
-    return $scope.id;
+
+
+  $scope.askForPIN = function(){
+
+
   }
 
-
   $scope.addItem = function() {
+    var inputbox = document.getElementById("scaninput").value;
+    alert("input is: " + inputbox);
+    console.log("scanneditem is:" + ScannedItemService.getScannedItem());
 
-   $scope.showPopup()
+    //$scope.id = ScannedItemService.getScannedItem();
+    $scope.id = inputbox;
+          SMoKEAPIservice.getItemDetails($scope.id).then(function successCallback(response) {
+          //Digging into the response to get the relevant data
+          $scope.item = response;
+          console.log(response);
+          console.log("openTab.bill: " + $scope.openTab.bill);
+          $scope.openTab.bill.push($scope.item);
+          inputbox.value="";
+          /*
+          for(let sub of $scope.openTab.bill){
+          calcTotal += item.data.cost;
+          */
+       
+          //$scope.subtotal = calcTotal;
+          
+        }, function errorCallback(response) {})
+              alert(response);
+              alert("item not found");
+              console.log($scope.id);
+              inputbox.value="";
+              return $scope.id;
+
+
+   //$scope.showPopup()
    
    console.log($scope.subtotal);
    $scope.id = '';

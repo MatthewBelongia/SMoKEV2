@@ -2,11 +2,16 @@
   <ion-content class="has-footer">
     <div class="item item-input-inset">
       <label class="item-input-wrapper">
-        <input type="text" ng-model="id">
+        <input id="scaninput" type="number" ng-model="scanneditem" ng-enter="addItem()" autofocus/>
       </label>
-      <button class="button button-balanced ion-plus button-small" ng-click="addItem()">
+      <button id="scannerbutton" class="button button-balanced ion-plus button-small" ng-click="addItem()" ng-enter="addItem()">
         Add Item
       </button>
+
+    </div>
+    <div>
+    <button class = "button button-balanced ion-plus button-small" ng-click="showPopup()">
+    Scope test
     </div>
     <ion-list>
       <ion-item class="item item-divider">
@@ -20,7 +25,7 @@
         <div class="row">
           <div class="col col-15">1</div>
           <div class="col col-60">{{item.data.name}}</div>
-          <div class="col col-25">${{item.data.cost}}</div>
+          <div class="col col-25">${{item.data.coststick}}</div>
           <!--*item.data.inventorylevel}}-->
         </div>
       </ion-item>

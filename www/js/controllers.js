@@ -16,7 +16,7 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('OpenTabCtrl', function($scope, OpenTabsFactory, $ionicPopup, $http, $ionicModal) {
+.controller('OpenTabCtrl', function($scope, OpenTabsFactory, $ionicPopup, $http, $ionicModal,ScannedItemService) {
   var openTabID = 0;
   $scope.openTab = {
     id: openTabID,

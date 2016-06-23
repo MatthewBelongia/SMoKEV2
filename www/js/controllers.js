@@ -16,7 +16,29 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('OpenTabCtrl', function($scope, OpenTabsFactory, $ionicPopup, $http, $ionicModal,ScannedItemService) {
+.controller('OpenTabCtrl', function($scope, OpenTabsFactory, $ionicPopup, $http, $ionicModal,ScannedItemService,SMoKEAPIservice,SharedParametersService) {
+  
+  $scope.nameFilter =null;
+  $scope.tabList = [];
+
+  SMoKEAPIservice.getAllTabs().success(function(response){
+      $scope.tabList = response;
+      console.log(response);
+  });
+
+  $scope.changeTabID = function(tab){
+    SharedParametersService.setCurrentTabID(tab.id);
+    SharedParametersService.setCurrentEmployee(tab.empId);
+
+    console.log(tab);
+
+    console.log("currentID: " + SharedParametersService.getCurrentTabID());
+    console.log("currentempid: " + SharedParametersService.getCurrentEmployee());
+
+  }
+
+
+
   var openTabID = 0;
   $scope.openTab = {
     id: openTabID,
@@ -63,6 +85,52 @@ angular.module('starter.controllers', [])
     });
 
   };
+
+  $scope.askForPIN = function(){
+
+
+    var myPinPopup = $ionicPopup.show({
+
+
+      template: '<input type="tel" id="pinEntry" ng-model="pin"  autofocus/>',
+      title: 'Enter PIN',
+      scope: $scope,
+      buttons: [
+      { text: 'Cancel' },
+      {
+        text: '<b>Ok</b>',
+        type: 'button-positive',
+
+        onTap: function(e) {
+          
+          var pin = document.getElementById("pinEntry").value;
+          SMoKEAPIservice.getUserDetails(pin).then(function successCallback(response) {
+          //Digging into the response to get the relevant data
+          $scope.user = response;
+          console.log(response);
+          try{
+          if($scope.user.data.firstname.length != 0){
+            console.log($scope.user.data.employeeid);
+            console.log("user found");
+            $scope.showPopup();
+            }
+          }catch(err){
+            //alert("PIN not found");
+            console.log("no user found");
+            $scope.askForPIN();
+          }
+          
+        }, function errorCallback(response) {})             
+              return pin;
+            }
+          }
+          ]
+
+
+        });
+        
+  };
+
   $scope.openModal = function() {
     $scope.modal.show();
   };

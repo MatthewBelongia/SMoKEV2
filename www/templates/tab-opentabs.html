@@ -1,10 +1,18 @@
 <ion-view view-title="Open Tabs">
   <ion-content class=body >
-    <div class="item item-input-inset">
-      <button class="button button-balanced ion-plus button-block" ng-click="showPopup()">
+  <div id="currentEmployee"></div>
+  <div class="item item-input-inset">
+      <button class="button button-balanced ion-plus button-block" ng-click="askForPIN()">
         Open New Tab
       </button>
     </div>
+  <input type="text" ng-model="nameFilter" placeholder="Search..."/>
+  <ion-list>
+    <ion-item ng-repeat="tab in tabList | filter: nameFilter" type="item-text-wrap" ng-click = "changeTabID({{tab}})" ng-href="#/tab/opentabs/{{tab.id}}">
+    <p>tab id : {{tab.id}}  location : {{tab.location}}  name : {{tab.name}}</p>
+    </ion-item>
+    </ion-list>
+    
     <ion-list>
       <ion-item class="item-remove-animate item-avatar item-icon-right " ng-repeat="openTab in openTabs" type="item-text-wrap" href="#/tab/opentabs/{{openTab.id}}">
         <h2>{{openTab.name}}</h2>

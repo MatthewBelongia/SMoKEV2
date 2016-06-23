@@ -2,9 +2,9 @@ angular.module('starter.billController', [])
 
 
 
-.controller('BillCtrl', function($scope, $stateParams, OpenTabsFactory, $ionicPopover, $http, SMoKEAPIservice,$ionicPopup,ScannedItemService) {
+.controller('BillCtrl', function($scope, $stateParams, OpenTabsFactory, $ionicPopover, $http, SMoKEAPIservice,$ionicPopup,ScannedItemService,SharedParametersService) {
 
-console.log("getScanneditem: " + ScannedItemService.getScannedItem());
+//console.log("getScanneditem: " + ScannedItemService.getScannedItem());
 document.getElementById("scaninput")
     .addEventListener("keyup", function(event) {
     event.preventDefault();
@@ -17,11 +17,21 @@ document.getElementById("scaninput")
     }
     });
 
+  $scope.tabItemList = [];
+
+  SMoKEAPIservice.getTabItems(SharedParametersService.getCurrentTabID()).success(function(response){
+      console.log("currentID: " + SharedParametersService.getCurrentTabID());
+      $scope.tabItemList = response;
+  });
+
   $scope.openTab = OpenTabsFactory.get($stateParams.tabID);
   console.log($scope.openTab);
   $scope.id = '';
   $scope.item = null;
+  $scope.user = null;
   $scope.subtotal;
+  $scope.pin = '';
+  console.log("pin is" + $scope.pin);
   var calcTotal = 0;
   var sub = $scope.item;
 
@@ -38,14 +48,10 @@ document.getElementById("scaninput")
 
   $scope.showPopup = function() {
 
-    $scope.data = {};
-
-
-    
     var myPopup = $ionicPopup.show({
 
 
-      template: '<input type="tel" id="scannerbox" ng-model="data.scanned"  autofocus/>',
+      template: '<input type="number" id="scannerbox" ng-model="data.scanned"  autofocus/>',
       title: 'Scan Item',
       scope: $scope,
       buttons: [
@@ -56,26 +62,17 @@ document.getElementById("scaninput")
 
         onTap: function(e) {
 
-          alert("input is: " + $scope.data.scanned);
+          //alert("input is: " + $scope.data.scanned);
           $scope.id = $scope.data.scanned;
           SMoKEAPIservice.getItemDetails($scope.id).then(function successCallback(response) {
           //Digging into the response to get the relevant data
           $scope.item = response;
-          console.log(response);
-          console.log("openTab.bill: " + $scope.openTab.bill);
+          
           $scope.openTab.bill.push($scope.item);
-          /*
-          for(let sub of $scope.openTab.bill){
-          calcTotal += item.data.cost;
-          */
-       
-          //$scope.subtotal = calcTotal;
+          
           
         }, function errorCallback(response) {})
-              alert(response);
-              alert("item not found");
-              console.log($scope.data.scanned);
-              console.log($scope.id);
+             
               return $scope.id;
             }
           }
@@ -88,14 +85,50 @@ document.getElementById("scaninput")
   $scope.askForPIN = function(){
 
 
-  }
+    var myPinPopup = $ionicPopup.show({
+
+
+      template: '<input type="tel" id="pinEntry" ng-model="pin"  autofocus/>',
+      title: 'Enter PIN',
+      scope: $scope,
+      buttons: [
+      { text: 'Cancel' },
+      {
+        text: '<b>Ok</b>',
+        type: 'button-positive',
+
+        onTap: function(e) {
+          
+          var pin = document.getElementById("pinEntry").value;
+          SMoKEAPIservice.getUserDetails(pin).then(function successCallback(response) {
+          //Digging into the response to get the relevant data
+          $scope.user = response;
+          console.log(response);
+          try{
+          if($scope.user.data.firstname.length != 0){
+            console.log("user found");
+            }
+          }catch(err){
+            //alert("PIN not found");
+            console.log("no user found");
+            $scope.askForPIN();
+          }
+
+        }, function errorCallback(response) {})             
+              return pin;
+            }
+          }
+          ]
+
+
+        });
+        
+      }
 
   $scope.addItem = function() {
     var inputbox = document.getElementById("scaninput").value;
-    alert("input is: " + inputbox);
     console.log("scanneditem is:" + ScannedItemService.getScannedItem());
 
-    //$scope.id = ScannedItemService.getScannedItem();
     $scope.id = inputbox;
           SMoKEAPIservice.getItemDetails($scope.id).then(function successCallback(response) {
           //Digging into the response to get the relevant data
@@ -103,27 +136,56 @@ document.getElementById("scaninput")
           console.log(response);
           console.log("openTab.bill: " + $scope.openTab.bill);
           $scope.openTab.bill.push($scope.item);
-          inputbox.value="";
-          /*
-          for(let sub of $scope.openTab.bill){
-          calcTotal += item.data.cost;
-          */
-       
-          //$scope.subtotal = calcTotal;
+          document.getElementById("scaninput").value = "";
+          
           
         }, function errorCallback(response) {})
-              alert(response);
-              alert("item not found");
+              //alert(response);
+              //alert("item not found");
               console.log($scope.id);
-              inputbox.value="";
+              document.getElementById("scaninput").value = "";
               return $scope.id;
 
-
-   //$scope.showPopup()
-   
-   console.log($scope.subtotal);
    $scope.id = '';
  };
+
+ $scope.addToTab = function(){
+    var inputbox = document.getElementById("scaninput").value;
+
+    $scope.id = inputbox;
+          SMoKEAPIservice.getItemDetails($scope.id).then(function successCallback(response) {
+          //Digging into the response to get the relevant data
+          $scope.item = response;
+          console.log(response);
+          /*
+          console.log("openTab.bill: " + $scope.openTab.bill);
+          $scope.openTab.bill.push($scope.item);
+          */
+          document.getElementById("scaninput").value = "";
+         
+          var time = (new Date).toISOString().replace(/z|t/gi,' ').replace(/\.[^.]*$/,'');
+          
+          console.log(time);
+          SMoKEAPIservice.addTabItem(SharedParametersService.getCurrentTabID(),response.data.id,response.data.coststick,1,0,response.data.coststick,time,0,"test",SharedParametersService.getCurrentEmployee())
+          .then(function successCallback(response){
+            SMoKEAPIservice.getTabItems(SharedParametersService.getCurrentTabID()).success(function(response){
+              console.log("currentID: " + SharedParametersService.getCurrentTabID());
+              $scope.tabItemList = response;
+            });
+          })
+          
+          
+          
+        }, function errorCallback(response) {})
+              //alert(response);
+              //alert("item not found");
+              console.log($scope.id);
+              document.getElementById("scaninput").value = "";
+              return $scope.id;
+
+   $scope.id = '';
+ };
+ 
 
  $ionicPopover.fromTemplateUrl('templates/popover.html', {
   scope: $scope

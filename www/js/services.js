@@ -74,6 +74,15 @@ angular.module('starter.services', [])
       });
     }
 
+    addTab = function(empid,name,location,card,total,date){
+        return $http({
+
+          method:'GET',
+          url: 'http://192.168.1.189:8080/newtab?empid='+empid+'&name='+name
+          +'&location='+location+'&card='+card+'&total='+total+'&date='+date
+        });
+    }
+
     addTabItem = function(tabid,cigarid,retail,quantity,discount,finalamount,timestamp,coalcount,hookahbuilder,salesemployeeid){
       return $http({
         method: 'GET',
@@ -105,8 +114,10 @@ angular.module('starter.services', [])
     return{
       getItemDetails: getItemDetails, //Comma?
       getUserDetails: getUserDetails,
+      addTab: addTab,
       addTabItem: addTabItem,
       getAllTabs: getAllTabs,
       getTabItems: getTabItems,
+
     }
   });

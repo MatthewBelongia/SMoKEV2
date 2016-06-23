@@ -122,7 +122,8 @@ document.getElementById("scaninput")
 
 
         });
-        
+      
+
       }
 
   $scope.addItem = function() {

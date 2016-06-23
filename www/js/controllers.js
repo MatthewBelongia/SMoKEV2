@@ -112,7 +112,15 @@ angular.module('starter.controllers', [])
           if($scope.user.data.firstname.length != 0){
             console.log($scope.user.data.employeeid);
             console.log("user found");
-            $scope.showPopup();
+
+            var date = (new Date).toISOString().replace(/z|t/gi,' ').replace(/\.[^.]*$/,'');  
+            SMoKEAPIservice.addTab(SharedParametersService.getCurrentEmployee(),'snoop','Moon','VISA',7.33,date).
+            then(function successCallback(response){
+            console.log(response);
+          })
+
+
+            //$scope.showPopup();
             }
           }catch(err){
             //alert("PIN not found");
@@ -128,6 +136,7 @@ angular.module('starter.controllers', [])
 
 
         });
+        
         
   };
 

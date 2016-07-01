@@ -1,4 +1,4 @@
-<ion-view view-title="{{openTab.name}}'s Bill">
+<ion-view view-title="{{tabOwner}}'s {{tabLocation}} Bill">
   <ion-content class="has-footer">
     <div class="item item-input-inset">
       <label class="item-input-wrapper">
@@ -11,19 +11,19 @@
 
 
     </div>
-    <div>
-      <ion-list>
-      <ion-item ng-repeat = "tabItem in tabItemList" type="item-text-wrap">
-      <p>tabItem id: {{tabItem.id}}  cigarId: {{tabItem.cigarid}}  retail: {{tabItem.retail}}</p>
-      </ion-item> 
-      </div>
     <!--
-    <div>
-    <button class = "button button-balanced ion-plus button-small" ng-click="askForPIN()">
-    PIN 
-    </div>
+    <cigar-directive cigarid="SMoKEAPIservice.getCigarDetails(tabItemList[0].id)">cigarname{{cigarid}}</cigar-directive>
+    ng-init="getCigarName(tabItem.cigarid)"
+    <p>tabItem id: {{tabItem.id}}  cigarId: {{tabItem.cigarid}}  retail: {{tabItem.retail}} name: {{tabItem.name}}</p>
     -->
-    <ion-list>
+    <div>
+    <ion-row>
+        <ion-col width-30 offset-15>Subtotal:</ion-col>
+        <ion-col width-30 offset-15>
+          <span id="currency-default">{{subtotal | currency}}</span>
+        </ion-col>
+      </ion-row>
+      <ion-list>
       <ion-item class="item item-divider">
         <div class="row">
           <div class="col col-15">Qty:</div>
@@ -31,15 +31,29 @@
           <div class="col col-25">Cost:</div>
         </div>
       </ion-item>
-      <ion-item class="item-text-wrap" ng-repeat="item in openTab.bill" ng-click="openPopover($event)" >
-        <div class="row">
+      <ion-item ng-repeat = "tabItem in tabItemList" ng-init='getCigarName(tabItem)'  type="item-text-wrap" >
+      
+      <div class="row">
           <div class="col col-15">1</div>
-          <div class="col col-60">{{item.data.name}}</div>
-          <div class="col col-25">${{item.data.coststick}}</div>
-          <!--*item.data.inventorylevel}}-->
+          <div class="col col-60">{{tabItem.name}}</div>
+          <div class="col col-25">${{tabItem.retail}}</div>
         </div>
+
+      </ion-item> 
+      </div>
+    <!--
+    <div>
+    <button class = "button button-balanced ion-plus button-small" ng-click="askForPIN()">
+    PIN 
+    </div>
+    
+    <ion-list>
+      
+      <ion-item class="item-text-wrap" ng-repeat="item in openTab.bill" ng-click="openPopover($event)" >
+        
       </ion-item>
     </ion-list>
+    -->
   </ion-content>
   <ion-footer-bar class="item item-divider" style="position: fixed">
     <ion-grid>

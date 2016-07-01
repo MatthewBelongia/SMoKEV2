@@ -4,6 +4,10 @@ angular.module('starter.services', [])
 
   var currentTabID =0;
   var currentEmployee = "";
+  var empName = "";
+  var location = "";
+  var card = "";
+
   
   return{
     getCurrentTabID: function(){
@@ -17,7 +21,26 @@ angular.module('starter.services', [])
     },
     setCurrentEmployee: function(value){
       currentEmployee = value;
-    }
+    },
+    getEmpName : function(){
+      return empName;
+    },
+    setEmpName : function(value){
+      empName = value;
+    },
+    getLocation : function(){
+      return location;
+    },
+    setLocation : function(value){
+      location = value;
+    },
+    getCard : function(){
+      return card;
+    },
+    setCard : function(value){
+      card = value;
+    },
+
   };
 
 })
@@ -67,6 +90,13 @@ angular.module('starter.services', [])
       });
     }
 
+    getCigarDetails = function(cigarid){
+      return $http({
+        method: 'GET',
+        url: 'http://192.168.1.189:8080/cigarid?id=' + cigarid
+      });
+    }
+
      getUserDetails = function(pin) {
       return $http({
         method: 'GET',
@@ -79,8 +109,9 @@ angular.module('starter.services', [])
 
           method:'GET',
           url: 'http://192.168.1.189:8080/newtab?empid='+empid+'&name='+name
-          +'&location='+location+'&card='+card+'&total='+total+'&date='+date
+          +'&location='+location+'&card='+card+'&date='+date
         });
+        //+'&total='+total
     }
 
     addTabItem = function(tabid,cigarid,retail,quantity,discount,finalamount,timestamp,coalcount,hookahbuilder,salesemployeeid){
@@ -113,6 +144,7 @@ angular.module('starter.services', [])
 
     return{
       getItemDetails: getItemDetails, //Comma?
+      getCigarDetails: getCigarDetails,
       getUserDetails: getUserDetails,
       addTab: addTab,
       addTabItem: addTabItem,

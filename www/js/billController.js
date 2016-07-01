@@ -17,19 +17,41 @@ document.getElementById("scaninput")
     }
     });
 
+
+  $scope.tabOwner = "";
+  $scope.tabOwner = SharedParametersService.getEmpName();
+  console.log($scope.tabOwner);
+
+  $scope.tabLocation = "";
+  $scope.tabLocation = SharedParametersService.getLocation();
+  console.log($scope.tabLocation);
+
+  $scope.updateTabOwner = function(){
+    $scope.tabOwner = SharedParametersService.getEmpName();
+    console.log($scope.tabOwner);
+  }
+
   $scope.tabItemList = [];
+  $scope.subtotal = 0;
 
   SMoKEAPIservice.getTabItems(SharedParametersService.getCurrentTabID()).success(function(response){
       console.log("currentID: " + SharedParametersService.getCurrentTabID());
       $scope.tabItemList = response;
+      console.log($scope.tabItemList);
+      for(var tabI in $scope.tabItemList){
+        console.log($scope.tabItemList[tabI].retail);
+        $scope.subtotal+= $scope.tabItemList[tabI].retail;
+      }
   });
+  console.log("subtotal :" + $scope.subtotal);
+  $scope.tabItemCurrent = $scope.tabItemList[0];
+
 
   $scope.openTab = OpenTabsFactory.get($stateParams.tabID);
   console.log($scope.openTab);
   $scope.id = '';
   $scope.item = null;
   $scope.user = null;
-  $scope.subtotal;
   $scope.pin = '';
   console.log("pin is" + $scope.pin);
   var calcTotal = 0;
@@ -41,10 +63,56 @@ document.getElementById("scaninput")
    }
    */
 
-  $scope.subtotal = calcTotal;
+  //$scope.subtotal = calcTotal;
   window.onerror = function (errorMsg, url, lineNumber) {
          alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber);
     }
+
+  $scope.cigarName = null;
+  $scope.testCigar = null;
+
+/*
+  $scope.$watch("tabItemList", function(){
+    console.log($scope.tabItemList);
+    for(var tabItem in $scope.tabItemList){
+          if (!$scope.tabItemList.hasOwnProperty(tabItem)) continue;
+          var testCigar = null;
+          var obj = $scope.tabItemList[tabItem];
+            for(var prop in obj ) {
+                  if(!obj.hasOwnProperty(prop)) continue;
+
+                  if(prop == "cigarid"){
+                  console.log(obj[prop]);
+                  $scope.testCigar  = SMoKEAPIservice.getCigarDetails(obj[prop]);
+                  console.log(testCigar);
+                  break;
+                  }          
+            }
+            
+
+    };
+
+  });
+
+  */
+
+  $scope.getCigarName = function(cigarItem){
+
+      if(null != cigarItem ){
+      cigarItem.name = {};
+      //console.log(cigarItem);
+      SMoKEAPIservice.getCigarDetails(cigarItem.cigarid).then(function successCallback(response){
+          console.log(response);
+          cigarItem.name = response.data.name; 
+          /*
+          $scope.cigarName = response.data.name;
+          console.log($scope.cigarName);
+          */
+          console.log(cigarItem);
+
+      });
+      }
+  };
 
   $scope.showPopup = function() {
 
@@ -163,7 +231,7 @@ document.getElementById("scaninput")
           $scope.openTab.bill.push($scope.item);
           */
           document.getElementById("scaninput").value = "";
-         
+          
           var time = (new Date).toISOString().replace(/z|t/gi,' ').replace(/\.[^.]*$/,'');
           
           console.log(time);
@@ -202,3 +270,24 @@ $scope.voidItem = function(item) {
 };
 $scope.reOrderItem = function(item) {};
 })
+
+
+.directive('cigarDirective',function(SMoKEAPIservice){
+  return {
+    scope: {
+      cigarid: '&'
+      //other: {{ tabItemList }} 
+      //SMoKEAPIservice.getCigarDetails(tabItem.id)
+    },
+    restrict: "E",
+
+    //template: '<ion-item> test </ion-item>',
+    /*
+    link: function(scope,element,attrs){
+      console.log('get name of cigar',scope.name);
+    },
+    */
+    controller: 'BillCtrl'
+    
+  };
+});

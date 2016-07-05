@@ -16,7 +16,7 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('OpenTabCtrl', function($scope, OpenTabsFactory, $ionicPopup, $http, $ionicModal,ScannedItemService,SMoKEAPIservice,SharedParametersService) {
+.controller('OpenTabCtrl', function($scope, $location,OpenTabsFactory, $ionicPopup, $http, $ionicModal,ScannedItemService,SMoKEAPIservice,SharedParametersService) {
   
   $scope.nameFilter =null;
   $scope.tabList = [];
@@ -25,6 +25,38 @@ angular.module('starter.controllers', [])
       $scope.tabList = response;
       console.log(response);
   });
+
+  $scope.updateTabs = function(){
+    SMoKEAPIservice.getAllTabs().success(function(response){
+      $scope.tabList = response;
+      console.log(response);
+  });
+
+  }
+
+  window.onload = $scope.updateTabs();
+
+  angular.element(document).ready(function (){
+    console.log("testing");
+
+  })
+
+  $scope.$on('$viewContentLoaded', function() {
+    console.log("viewContentLoaded");
+});
+
+  $scope.$on('$stateChangeSuccess', function () {
+    console.log("stateChangeSuccess");
+    $scope.updateTabs();
+});
+
+  $scope.$on('$routeChangeSuccess', function () {
+    console.log("routeChangeSuccess");
+});
+
+  $scope.go = function ( path ) {
+    $location.path( path );
+  };
 
   $scope.changeTabID = function(tab){
 
@@ -171,10 +203,7 @@ angular.module('starter.controllers', [])
           ]
 
 
-        });
-    
-        
-        
+        });                
   };
 
 
@@ -209,7 +238,7 @@ angular.module('starter.controllers', [])
             console.log($scope.user.data.employeeid);
             console.log("user found");
             SharedParametersService.setCurrentEmployee = $scope.user.data.employeeid;
-            return "#/tab/opentabs/{{tab.id}}";
+            $scope.go("/tab/opentabs/{{tab.id}}");
             //$scope.showPopup();
             }
           }catch(err){
@@ -308,7 +337,112 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('SpecialsCtrl', function($scope) {
+.controller('SpecialsCtrl', function($scope,$location,SharedParametersService,$ionicPopup,SMoKEAPIservice) {
+
+  $scope.go = function ( path ) {
+    $location.path( path );
+  };
+
+
+  $scope.askForCard = function(location){
+    SharedParametersService.setLocation(location);
+    console.log(SharedParametersService.getLocation());
+
+    var myCardPopup = $ionicPopup.show({
+
+
+      template: '<input type="text" id="cardEntry" ng-model="card"  autofocus/>',
+      title: 'Enter Card Type',
+      scope: $scope,
+      buttons: [
+      { text: 'Cancel' },
+      {
+        text: '<b>Ok</b>',
+        type: 'button-positive',
+
+        onTap: function(e) {
+              
+              var card = document.getElementById("cardEntry").value;
+              console.log("card " + card);
+              SharedParametersService.setCard(card);
+              console.log(SharedParametersService.getCard());
+              console.log("card after " + card);
+              $scope.askForPIN();         
+            }
+          }
+          ]
+        });                
+  };
+
+
+  $scope.askForPIN = function(){
+
+    //var location = $scope.askForLocation();
+    var location = SharedParametersService.getLocation();
+    console.log("location is" + location);
+
+
+    var myPinPopup = $ionicPopup.show({
+
+
+      template: '<input type="tel" id="pinEntry" ng-model="pin"  autofocus/>',
+      title: 'Enter PIN',
+      scope: $scope,
+      buttons: [
+      { text: 'Cancel' },
+      {
+        text: '<b>Ok</b>',
+        type: 'button-positive',
+
+        onTap: function(e) {
+          
+          var pin = document.getElementById("pinEntry").value;
+          SMoKEAPIservice.getUserDetails(pin).then(function successCallback(response) {
+          //Digging into the response to get the relevant data
+          $scope.user = response;
+          console.log(response);
+          try{
+          if($scope.user.data.firstname.length != 0){
+            console.log($scope.user.data.employeeid);
+            console.log("user found");
+
+            
+
+
+            var tzOffset = (new Date()).getTimezoneOffset() * 60000;
+            var date = (new Date(Date.now() - tzOffset)).toISOString().replace(/z|t/gi,' ').replace(/\.[^.]*$/,'');  
+            SMoKEAPIservice.addTab($scope.user.data.employeeid,$scope.user.data.firstname,location,SharedParametersService.getCard(),0,date).
+            then(function successCallback(response){
+            console.log(response);
+            
+            
+            SMoKEAPIservice.getAllTabs().success(function(response){
+              $scope.go("/tab/opentabs");
+            });
+            
+          })
+
+
+            //$scope.showPopup();
+            }
+          }catch(err){
+            //alert("PIN not found");
+            console.log("no user found");
+            $scope.askForPIN();
+          }
+          
+        }, function errorCallback(response) {})             
+              return pin;
+            }
+          }
+          ]
+
+
+        });
+        
+        
+  };
+
   $scope.specials = [{
     title: 'Happy hour',
     amount: 25

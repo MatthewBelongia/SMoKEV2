@@ -1,10 +1,149 @@
-<ion-view view-title="Specials">
+<ion-view view-title="Locations">
   <ion-content>
+  <!--
     <ion-item ng-repeat="special in specials" type="item-text-wrap">
       <h2>{{special.title}}</h2>
       <p>
         {{special.amount}}%
       </p>
     </ion-item>
+    -->
+    
+<ion-item>
+<div class = "row responsive-sm">
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="askForCard('MemberOnly')">
+        MemO
+      </button></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="askForCard('Left 2')">
+        Left 2
+      </button></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="askForCard('Left 3')">
+        Left 3
+      </button></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="askForCard('Left 4')">
+        Left 4
+      </button></div>
+ </div>
+ </ion-item>
+ <ion-item>
+ <div class = "row responsive-sm">
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="askForCard('Outside 4')">
+        Out 4
+      </button></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="askForCard('Hookah Bar Left')">
+        HookBL
+      </button></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="askForCard('Hookah Bar Right')">
+        HookBR
+      </button></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="askForCard('Humidor Chair Left')">
+        HumCL
+      </button></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        HumCR
+      </button></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+ </div>
+ </ion-item>
+ <ion-item>
+ <div class = "row responsive-sm">
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        Out 3
+      </button></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        Comfy
+      </button></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        Other
+      </button></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        VIP
+      </button></div>
+ </div>
+ </ion-item>
+ <ion-item>
+ <div class = "row responsive-sm">
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        Out 2
+      </button></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        HTop 1
+      </button></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        HTop 2
+      </button></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        Unknwn
+      </button></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+ </div>
+ </ion-item>
+ <ion-item>
+ <div class = "row responsive-sm">
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        BarL
+      </button></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        BarM
+      </button></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        BarR
+      </button></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+ </div>
+ </ion-item>
+ <ion-item>
+ <div class = "row responsive-sm">
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        Out 1
+      </button></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        FrntC
+      </button></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        BarF
+      </button></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        Right 1
+      </button></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        Right 2
+      </button></div>
+   <div class = "col col-top"><button class="button button-balanced ion-plus button-small" ng-click="go('/tab/specials')">
+        Right 3
+      </button></div>
+ </div>
+ </ion-item>
   </ion-content>
 </ion-view>

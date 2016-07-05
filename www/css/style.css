@@ -21,6 +21,11 @@ text-overflow: auto;
 white-space: wrap;
 }
 
+.col-top{
+
+  font-size: 1.5vw;
+}
+
 /*/*
 .row{
 word-wrap: break-word;

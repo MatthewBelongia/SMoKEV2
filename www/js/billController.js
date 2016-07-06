@@ -205,6 +205,7 @@ document.getElementById("scaninput")
           console.log(response);
           console.log("openTab.bill: " + $scope.openTab.bill);
           $scope.openTab.bill.push($scope.item);
+          
           document.getElementById("scaninput").value = "";
           
           
@@ -235,11 +236,16 @@ document.getElementById("scaninput")
           var time = (new Date).toISOString().replace(/z|t/gi,' ').replace(/\.[^.]*$/,'');
           
           console.log(time);
-          SMoKEAPIservice.addTabItem(SharedParametersService.getCurrentTabID(),response.data.id,response.data.coststick,1,0,response.data.coststick,time,0,"test",SharedParametersService.getCurrentEmployee())
+          SMoKEAPIservice.addTabItem(SharedParametersService.getCurrentTabID(),response.data.id,response.data.retailstick,1,0,response.data.retailstick,time,0,"test",SharedParametersService.getCurrentEmployee())
           .then(function successCallback(response){
             SMoKEAPIservice.getTabItems(SharedParametersService.getCurrentTabID()).success(function(response){
               console.log("currentID: " + SharedParametersService.getCurrentTabID());
               $scope.tabItemList = response;
+              $scope.subtotal = 0;
+              for(var tabI in $scope.tabItemList){
+                console.log($scope.tabItemList[tabI].retail);
+                $scope.subtotal+= $scope.tabItemList[tabI].retail;
+              }
             });
           })
           

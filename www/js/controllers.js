@@ -20,11 +20,12 @@ angular.module('starter.controllers', [])
   
   $scope.nameFilter =null;
   $scope.tabList = [];
-
+  
   SMoKEAPIservice.getAllTabs().success(function(response){
       $scope.tabList = response;
       console.log(response);
   });
+
 
   $scope.updateTabs = function(){
     SMoKEAPIservice.getAllTabs().success(function(response){
@@ -34,12 +35,13 @@ angular.module('starter.controllers', [])
 
   }
 
-  window.onload = $scope.updateTabs();
-
+  //window.onload = $scope.updateTabs();
+  /*
   angular.element(document).ready(function (){
     console.log("testing");
 
   })
+  */
 
   $scope.$on('$viewContentLoaded', function() {
     console.log("viewContentLoaded");
@@ -213,6 +215,9 @@ angular.module('starter.controllers', [])
     var location = SharedParametersService.getLocation();
     console.log("location is" + location);
 
+    SharedParametersService.setCurrentTabID(tab.id);
+   
+
 
     var myPinPopup = $ionicPopup.show({
 
@@ -237,7 +242,12 @@ angular.module('starter.controllers', [])
           if($scope.user.data.firstname.length != 0){
             console.log($scope.user.data.employeeid);
             console.log("user found");
-            SharedParametersService.setCurrentEmployee = $scope.user.data.employeeid;
+            SharedParametersService.setCurrentEmployee($scope.user.data.employeeid);
+            SharedParametersService.setEmpName($scope.user.data.firstname);
+
+            console.log("empid: " + SharedParametersService.getCurrentEmployee);
+            console.log("name: " + SharedParametersService.getEmpName);
+
             $scope.go("/tab/opentabs/{{tab.id}}");
             //$scope.showPopup();
             }

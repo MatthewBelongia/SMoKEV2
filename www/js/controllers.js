@@ -20,13 +20,18 @@ angular.module('starter.controllers', [])
   
   $scope.nameFilter =null;
   $scope.tabList = [];
+  //$scope.tempList = [];
   
   SMoKEAPIservice.getAllTabs().success(function(response){
       $scope.tabList = response;
       console.log(response);
   });
-
-
+/*
+  $scope.searchFilter = function (tab) {
+    var re = new RegExp($scope.nameFilter, 'i');
+    return !$scope.nameFilter || re.test(tab.tabid) || re.test(tab.Driver.familyName);
+  };
+*/
   $scope.updateTabs = function(){
     SMoKEAPIservice.getAllTabs().success(function(response){
       $scope.tabList = response;
@@ -41,21 +46,24 @@ angular.module('starter.controllers', [])
     console.log("testing");
 
   })
-  */
+  
 
   $scope.$on('$viewContentLoaded', function() {
     console.log("viewContentLoaded");
 });
-
+*/
   $scope.$on('$stateChangeSuccess', function () {
     console.log("stateChangeSuccess");
     $scope.updateTabs();
+    console.log(SharedParametersService.getFilter());
+    $scope.nameFilter = SharedParametersService.getFilter();
+    
 });
-
+/*
   $scope.$on('$routeChangeSuccess', function () {
     console.log("routeChangeSuccess");
 });
-
+*/
   $scope.go = function ( path ) {
     $location.path( path );
   };
@@ -92,7 +100,7 @@ angular.module('starter.controllers', [])
   }
 
 
-
+/*
   var openTabID = 0;
   $scope.openTab = {
     id: openTabID,
@@ -173,7 +181,7 @@ angular.module('starter.controllers', [])
         
         
   };
-
+*/
   
   $scope.askForCard = function(){
 
@@ -245,8 +253,8 @@ angular.module('starter.controllers', [])
             SharedParametersService.setCurrentEmployee($scope.user.data.employeeid);
             SharedParametersService.setEmpName($scope.user.data.firstname);
 
-            console.log("empid: " + SharedParametersService.getCurrentEmployee);
-            console.log("name: " + SharedParametersService.getEmpName);
+            console.log("empid: " + SharedParametersService.getCurrentEmployee());
+            console.log("name: " + SharedParametersService.getEmpName());
 
             $scope.go("/tab/opentabs/{{tab.id}}");
             //$scope.showPopup();
@@ -349,6 +357,8 @@ angular.module('starter.controllers', [])
 
 .controller('SpecialsCtrl', function($scope,$location,SharedParametersService,$ionicPopup,SMoKEAPIservice) {
 
+  $scope.tempList = [];
+
   $scope.go = function ( path ) {
     $location.path( path );
   };
@@ -427,7 +437,16 @@ angular.module('starter.controllers', [])
             
             
             SMoKEAPIservice.getAllTabs().success(function(response){
+              
+              $scope.tempList = response;
+              console.log("sort this: " + $scope.tempList);
+              var latestid = $scope.tempList.slice(-1)[0].id;
+              console.log(latestid);
+              
               $scope.go("/tab/opentabs");
+              //document.getElementById("searchtabs").value = latestid;
+              SharedParametersService.setFilter(latestid);
+
             });
             
           })

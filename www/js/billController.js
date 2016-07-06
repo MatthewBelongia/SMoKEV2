@@ -46,9 +46,10 @@ document.getElementById("scaninput")
   console.log("subtotal :" + $scope.subtotal);
   $scope.tabItemCurrent = $scope.tabItemList[0];
 
-
+/*
   $scope.openTab = OpenTabsFactory.get($stateParams.tabID);
   console.log($scope.openTab);
+  */
   $scope.id = '';
   $scope.item = null;
   $scope.user = null;
@@ -113,7 +114,7 @@ document.getElementById("scaninput")
       });
       }
   };
-
+/*
   $scope.showPopup = function() {
 
     var myPopup = $ionicPopup.show({
@@ -149,7 +150,7 @@ document.getElementById("scaninput")
         return $scope.id;
       }
 
-
+*/
   $scope.askForPIN = function(){
 
 
@@ -193,7 +194,7 @@ document.getElementById("scaninput")
       
 
       }
-
+/*
   $scope.addItem = function() {
     var inputbox = document.getElementById("scaninput").value;
     console.log("scanneditem is:" + ScannedItemService.getScannedItem());
@@ -218,7 +219,7 @@ document.getElementById("scaninput")
 
    $scope.id = '';
  };
-
+*/
  $scope.addToTab = function(){
     var inputbox = document.getElementById("scaninput").value;
 
@@ -267,14 +268,45 @@ document.getElementById("scaninput")
 }).then(function(popover) {
   $scope.popover = popover;
 });
-$scope.openPopover = function($event) {
+$scope.openPopover = function($event,tabItem) {
+  console.log(tabItem);
+  SharedParametersService.setItem(tabItem);
   $scope.popover.show($event);
 };
-$scope.voidItem = function(item) {
-  $scope.openTab.bill.splice($scope.openTab.bill.indexOf(item), 1);
-  $scope.openTab.subtotal -= item.price;
+$scope.voidItem = function(tabItem) {
+  //console.log(tabItem);
+  //console.log(SharedParametersService.getItem().data.id);
+  var tabitemid = SharedParametersService.getItem().id;
+  console.log(tabitemid);
+  SMoKEAPIservice.deleteTabItem(tabitemid);
 };
-$scope.reOrderItem = function(item) {};
+$scope.reOrderItem = function(item,tabItem) {
+  //console.log(item);
+  //console.log(tabItem);
+  console.log(SharedParametersService.getItem());
+};
+$scope.$on('popover.removed',function(){
+  console.log("popover removed");
+});
+$scope.$on('popover.hidden',function(){
+  console.log("popover hidden");
+  $scope.subtotal = 0;
+
+
+  SMoKEAPIservice.getTabItems(SharedParametersService.getCurrentTabID()).success(function(response){
+      console.log("currentID: " + SharedParametersService.getCurrentTabID());
+      $scope.tabItemList = response;
+      console.log($scope.tabItemList);
+      for(var tabI in $scope.tabItemList){
+        console.log($scope.tabItemList[tabI].retail);
+        $scope.subtotal+= $scope.tabItemList[tabI].retail;
+      }
+  });
+
+
+
+
+});
 })
 
 

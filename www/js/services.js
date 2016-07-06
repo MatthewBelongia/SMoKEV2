@@ -7,6 +7,8 @@ angular.module('starter.services', [])
   var empName = "";
   var location = "";
   var card = "";
+  var filter = "";
+  var selectedItem = {};
 
   
   return{
@@ -40,6 +42,18 @@ angular.module('starter.services', [])
     setCard : function(value){
       card = value;
     },
+    getFilter : function(){
+      return filter;
+    },
+    setFilter : function(value){
+      filter = value;
+    },
+    getItem : function(){
+      return selectedItem;
+    },
+    setItem : function(value){
+      selectedItem = value;
+    }
 
   };
 
@@ -142,6 +156,15 @@ angular.module('starter.services', [])
       });
     }
 
+    deleteTabItem = function(id){
+
+      return $http({
+          method: 'GET',
+          url: 'http://192.168.1.189:8080/deletetabitem?id='+id
+
+      })
+    }
+
     return{
       getItemDetails: getItemDetails, //Comma?
       getCigarDetails: getCigarDetails,
@@ -150,6 +173,7 @@ angular.module('starter.services', [])
       addTabItem: addTabItem,
       getAllTabs: getAllTabs,
       getTabItems: getTabItems,
+      deleteTabItem: deleteTabItem,
 
     }
   });

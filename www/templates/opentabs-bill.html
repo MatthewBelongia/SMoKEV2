@@ -32,7 +32,7 @@
           <div class="col col-25">Cost:</div>
         </div>
       </ion-item>
-      <ion-item ng-repeat = "tabItem in tabItemList" ng-init='getCigarName(tabItem)'  type="item-text-wrap" >
+      <ion-item ng-repeat = "tabItem in tabItemList" ng-init='getCigarName(tabItem)'  type="item-text-wrap" ng-click='openPopover($event,tabItem)'>
       
       <div class="row">
           <div class="col col-15">1</div>

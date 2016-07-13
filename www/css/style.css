@@ -26,6 +26,14 @@ white-space: wrap;
   font-size: 1.5vw;
 }
 
+.my-custom-popup.shop-popup {
+     bottom: 160px !important;
+}
+
+.my-custom-popup {
+     bottom: 160px !important;
+}
+
 /*/*
 .row{
 word-wrap: break-word;

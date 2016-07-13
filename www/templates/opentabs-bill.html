@@ -1,5 +1,6 @@
 <ion-view view-title="{{tabOwner}}'s {{tabLocation}} Bill">
   <ion-content class="has-footer">
+  <div><button class="button icon ion-chevron-left" ng-click="go('/tab/opentabs')"> All Open Tabs</button></div>
     <div class="item item-input-inset">
       <label class="item-input-wrapper">
         <input id="scaninput" type="text" ng-model="scanneditem" ng-enter="addToTab()" autofocus/>
@@ -24,7 +25,8 @@
           <span id="currency-default">{{subtotal | currency}}</span>
         </ion-col>
       </ion-row>
-      <ion-list>
+      <!--<input id="searchtabs" type="text" ng-model="itemFilter" placeholder="Search..."/>
+      causes too many spring calls-->
       <ion-item class="item item-divider">
         <div class="row">
           <div class="col col-15">Qty:</div>
@@ -32,12 +34,21 @@
           <div class="col col-25">Cost:</div>
         </div>
       </ion-item>
-      <ion-item ng-repeat = "tabItem in tabItemList" ng-init='getCigarName(tabItem)'  type="item-text-wrap" ng-click='openPopover($event,tabItem)'>
+      <ion-list can-swipe="true" >
       
+      <ion-item ng-repeat = "tabItem in tabItemList" ng-init='getCigarName(tabItem)'  type="item-text-wrap" ng-click='openPopover($event,tabItem)' >
+        <ion-option-button class="button-assertive icon ion-trash-a" ng-click='voidItem(tabItem)'></ion-option-button>
+        <ion-option-button class="button-assertive ion-minus-circled" ng-click='removeQuantity(tabItem)'></ion-option-button>
+        <ion-option-button ></ion-option-button>
+        <ion-option-button class="button-balanced ion-plus-circled" ng-click='reOrderItem(tabItem)'></ion-option-button>
+        <!--<ion-option-button class="button-balanced ion-cube"></ion-option-button>
+        on-swipe-right="alert('swiped right');"
+        -->
+
       <div class="row">
-          <div class="col col-15">1</div>
+          <div class="col col-15">{{tabItem.quantity}}</div>
           <div class="col col-60">{{tabItem.name}}</div>
-          <div class="col col-25">${{tabItem.retail}}</div>
+          <div class="col col-25">${{tabItem.finalamount}}</div>
         </div>
 
       </ion-item> 
@@ -55,6 +66,7 @@
       </ion-item>
     </ion-list>
     -->
+    </ion-list>
   </ion-content>
   <ion-footer-bar class="item item-divider" style="position: fixed">
     <ion-grid>
@@ -65,5 +77,8 @@
         </ion-col>
       </ion-row>
     </ion-grid>
+     <br/>
+  <br/>
+  <br/>
   </ion-footer-bar>
 </ion-view>

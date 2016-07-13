@@ -2,9 +2,19 @@ angular.module('starter.billController', [])
 
 
 
-.controller('BillCtrl', function($scope, $stateParams, OpenTabsFactory, $ionicPopover, $http, SMoKEAPIservice,$ionicPopup,ScannedItemService,SharedParametersService) {
+.controller('BillCtrl', function($scope, $stateParams, OpenTabsFactory, $ionicPopover, $http, SMoKEAPIservice,$ionicPopup,ScannedItemService,SharedParametersService,$location,$state,$timeout) {
 
 //console.log("getScanneditem: " + ScannedItemService.getScannedItem());
+/*
+var h5m = (typeof html5Mode !== 'undefined') ? html5Mode : true;
+$locationProvider.html5Mode(h5m);
+alert(h5m);
+*/
+
+$scope.alert = function(msg){
+  alert(msg);
+}
+
 document.getElementById("scaninput")
     .addEventListener("keyup", function(event) {
     event.preventDefault();
@@ -26,6 +36,24 @@ document.getElementById("scaninput")
   $scope.tabLocation = SharedParametersService.getLocation();
   console.log($scope.tabLocation);
 
+  $scope.mobilego = function( path ){
+    //alert('mobilego');
+    //$state.go('tab.opentabs-locations');
+    //$location.url('/tab/locations');
+    $timeout(function(){
+      $scope.$apply(function() {
+     $location.url('/tab/locations').replace();
+    });
+
+   })
+    
+  }
+
+   $scope.go = function ( path ) {
+    $location.path(path);
+  };
+
+
   $scope.updateTabOwner = function(){
     $scope.tabOwner = SharedParametersService.getEmpName();
     console.log($scope.tabOwner);
@@ -39,8 +67,8 @@ document.getElementById("scaninput")
       $scope.tabItemList = response;
       console.log($scope.tabItemList);
       for(var tabI in $scope.tabItemList){
-        console.log($scope.tabItemList[tabI].retail);
-        $scope.subtotal+= $scope.tabItemList[tabI].retail;
+        console.log($scope.tabItemList[tabI].finalamount);
+        $scope.subtotal+= $scope.tabItemList[tabI].finalamount;
       }
   });
   console.log("subtotal :" + $scope.subtotal);
@@ -160,6 +188,7 @@ document.getElementById("scaninput")
       template: '<input type="tel" id="pinEntry" ng-model="pin"  autofocus/>',
       title: 'Enter PIN',
       scope: $scope,
+      cssClass: 'my-custom-popup',
       buttons: [
       { text: 'Cancel' },
       {
@@ -220,14 +249,93 @@ document.getElementById("scaninput")
    $scope.id = '';
  };
 */
- $scope.addToTab = function(){
-    var inputbox = document.getElementById("scaninput").value;
+ $scope.addToTab = function(skuNumber){
+
+    var inputbox;
+
+    if(null != skuNumber){
+
+      console.log(skuNumber);
+      inputbox = skuNumber;
+
+      //console.log(inputbox);
 
     $scope.id = inputbox;
+    //console.log($scope.id);
+          SMoKEAPIservice.getCigarDetails($scope.id).then(function successCallback(response) {
+          //Digging into the response to get the relevant data
+          $scope.item = response;
+          console.log(response);
+
+          if(!response.data.retailstick > 0){
+              console.log($scope.id);
+              document.getElementById("scaninput").value = "";
+              alert("item not found");
+            }
+          /*
+          console.log("openTab.bill: " + $scope.openTab.bill);
+          $scope.openTab.bill.push($scope.item);
+          */
+          document.getElementById("scaninput").value = "";
+          
+          var time = (new Date).toISOString().replace(/z|t/gi,' ').replace(/\.[^.]*$/,'');
+          
+          console.log(time);
+          SMoKEAPIservice.addTabItem(SharedParametersService.getCurrentTabID(),response.data.id,response.data.retailstick,1,0,response.data.retailstick,time,0,"test",SharedParametersService.getCurrentEmployee())
+          .then(function successCallback(response){
+
+            SMoKEAPIservice.getTabItems(SharedParametersService.getCurrentTabID()).success(function(response){
+
+              
+              console.log("currentID: " + SharedParametersService.getCurrentTabID());
+              $scope.tabItemList = response;
+              $scope.subtotal = 0;
+              for(var tabI in $scope.tabItemList){
+                console.log($scope.tabItemList[tabI].finalamount);
+                $scope.subtotal+= $scope.tabItemList[tabI].finalamount;
+              }
+
+              return;
+            });
+          })
+          
+         
+          
+        }, function errorCallback(response) {
+
+          if(!response.data.retailstick > 0){
+              console.log($scope.id);
+              document.getElementById("scaninput").value = "";
+              alert("item not found");
+              return $scope.id;
+            }
+        })
+
+
+              //alert(response);
+              a
+
+
+
+   $scope.id = '';
+
+    }else{
+      inputbox = document.getElementById("scaninput").value;
+    }
+    //console.log(inputbox);
+
+    $scope.id = inputbox;
+    //console.log($scope.id);
           SMoKEAPIservice.getItemDetails($scope.id).then(function successCallback(response) {
           //Digging into the response to get the relevant data
           $scope.item = response;
           console.log(response);
+          if(!response.data.retailstick > 0){
+              console.log($scope.id);
+              document.getElementById("scaninput").value = "";
+              alert("item not found");
+            }
+
           /*
           console.log("openTab.bill: " + $scope.openTab.bill);
           $scope.openTab.bill.push($scope.item);
@@ -240,28 +348,40 @@ document.getElementById("scaninput")
           SMoKEAPIservice.addTabItem(SharedParametersService.getCurrentTabID(),response.data.id,response.data.retailstick,1,0,response.data.retailstick,time,0,"test",SharedParametersService.getCurrentEmployee())
           .then(function successCallback(response){
             SMoKEAPIservice.getTabItems(SharedParametersService.getCurrentTabID()).success(function(response){
-              console.log("currentID: " + SharedParametersService.getCurrentTabID());
+                            console.log("currentID: " + SharedParametersService.getCurrentTabID());
               $scope.tabItemList = response;
               $scope.subtotal = 0;
               for(var tabI in $scope.tabItemList){
-                console.log($scope.tabItemList[tabI].retail);
-                $scope.subtotal+= $scope.tabItemList[tabI].retail;
+                console.log($scope.tabItemList[tabI].finalamount);
+                $scope.subtotal+= $scope.tabItemList[tabI].finalamount;
               }
+              return;
             });
+
           })
           
           
           
-        }, function errorCallback(response) {})
-              //alert(response);
-              //alert("item not found");
+        }, function errorCallback(response) {
+          if(!response.data.retailstick > 0){
               console.log($scope.id);
               document.getElementById("scaninput").value = "";
+              alert("item not found");
+            }
+        })
+          
+              //alert(response);
+              
+              
               return $scope.id;
 
    $scope.id = '';
  };
  
+ $scope.popoverOpen = true;
+ $scope.tabItemNotRemoved = true;
+ $scope.reOrderClicked = false;
+
 
  $ionicPopover.fromTemplateUrl('templates/popover.html', {
   scope: $scope
@@ -269,44 +389,76 @@ document.getElementById("scaninput")
   $scope.popover = popover;
 });
 $scope.openPopover = function($event,tabItem) {
-  console.log(tabItem);
+  //console.log(tabItem);
   SharedParametersService.setItem(tabItem);
   $scope.popover.show($event);
 };
 $scope.voidItem = function(tabItem) {
   //console.log(tabItem);
   //console.log(SharedParametersService.getItem().data.id);
-  var tabitemid = SharedParametersService.getItem().id;
-  console.log(tabitemid);
-  SMoKEAPIservice.deleteTabItem(tabitemid);
+    SharedParametersService.setItem(tabItem);
+  if($scope.tabItemNotRemoved){
+    $scope.tabItemNotRemoved = false;
+    var tabitemid = SharedParametersService.getItem().id;
+    console.log(tabitemid);
+    SMoKEAPIservice.deleteTabItem(tabitemid).success(function(response){
+        $scope.popover.hide();
+    });
+}
 };
-$scope.reOrderItem = function(item,tabItem) {
+
+$scope.removeQuantity = function(tabItem) {
+  //console.log(tabItem);
+  //console.log(SharedParametersService.getItem().data.id);
+    SharedParametersService.setItem(tabItem);
+  if($scope.tabItemNotRemoved){
+    $scope.tabItemNotRemoved = false;
+    var tabitemid = SharedParametersService.getItem().id;
+    console.log(tabitemid);
+    SMoKEAPIservice.removeQuantityTabItem(tabitemid).success(function(response){
+        $scope.popover.hide();
+    });
+}
+
+};
+$scope.reOrderItem = function(tabItem) {
   //console.log(item);
   //console.log(tabItem);
-  console.log(SharedParametersService.getItem());
+  SharedParametersService.setItem(tabItem);
+  if(!$scope.reOrderClicked){
+    $scope.reOrderClicked = true;
+  //console.log(SharedParametersService.getItem());
+  var currentCigarId = SharedParametersService.getItem().id
+  console.log(currentCigarId);
+  SMoKEAPIservice.addQuantityTabItem(currentCigarId).success(function(response){
+    $scope.popover.hide();
+  })
+  
+}
 };
+
 $scope.$on('popover.removed',function(){
-  console.log("popover removed");
+ 
 });
 $scope.$on('popover.hidden',function(){
+  
   console.log("popover hidden");
   $scope.subtotal = 0;
-
 
   SMoKEAPIservice.getTabItems(SharedParametersService.getCurrentTabID()).success(function(response){
       console.log("currentID: " + SharedParametersService.getCurrentTabID());
       $scope.tabItemList = response;
       console.log($scope.tabItemList);
       for(var tabI in $scope.tabItemList){
-        console.log($scope.tabItemList[tabI].retail);
-        $scope.subtotal+= $scope.tabItemList[tabI].retail;
+        console.log($scope.tabItemList[tabI].finalamount);
+        $scope.subtotal+= $scope.tabItemList[tabI].finalamount;
       }
+      $scope.reOrderClicked = false;
+      $scope.tabItemNotRemoved = true;
   });
 
-
-
-
 });
+
 })
 
 

@@ -1,15 +1,22 @@
 angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'starter.billController', 'angularMoment'])
 
 .run(function($ionicPlatform) {
+
+  ionic.Platform.isFullScreen = true;
+  //cordova.plugins.Keyboard.disableScroll(false);
     
    
     $ionicPlatform.ready(function() {
+
+
 
       
       
       if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
         //cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
         //cordova.plugins.Keyboard.disableScroll(true);
+        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+        cordova.plugins.Keyboard.disableScroll(false);
       }
       
       if (window.StatusBar) {
@@ -24,6 +31,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
         abstract: true,
         templateUrl: 'templates/tabs.html'
       })
+      /*
       .state('tab.inventory', {
         url: '/inventory',
         views: {
@@ -33,6 +41,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
           }
         }
       })
+      */
       .state('tab.opentabs', {
         url: '/opentabs',
         views: {
@@ -51,11 +60,11 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
           }
         }
       })
-      .state('tab.specials', {
-        url: '/specials',
+      .state('tab.opentabs-locations', {
+        url: '/locations',
         views: {
-          'tab-specials': {
-            templateUrl: '/templates/tab-specials.html',
+          'tab-locations': {
+            templateUrl: '/templates/opentabs-locations.html',
             controller: 'SpecialsCtrl'
           }
         }

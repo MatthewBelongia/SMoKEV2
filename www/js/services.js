@@ -5,7 +5,7 @@ angular.module('starter.services', [])
   var currentTabID =0;
   var currentEmployee = "";
   var empName = "";
-  var location = "";
+  var seat = "";
   var card = "";
   var filter = "";
   var selectedItem = {};
@@ -31,10 +31,10 @@ angular.module('starter.services', [])
       empName = value;
     },
     getLocation : function(){
-      return location;
+      return seat;
     },
     setLocation : function(value){
-      location = value;
+      seat = value;
     },
     getCard : function(){
       return card;
@@ -118,12 +118,12 @@ angular.module('starter.services', [])
       });
     }
 
-    addTab = function(empid,name,location,card,total,date){
+    addTab = function(empid,name,seat,card,total,date){
         return $http({
 
           method:'GET',
           url: 'http://192.168.1.189:8080/newtab?empid='+empid+'&name='+name
-          +'&location='+location+'&card='+card+'&date='+date
+          +'&location='+seat+'&card='+card+'&date='+date
         });
         //+'&total='+total
     }
@@ -162,7 +162,22 @@ angular.module('starter.services', [])
           method: 'GET',
           url: 'http://192.168.1.189:8080/deletetabitem?id='+id
 
-      })
+      });
+    }
+
+    addQuantityTabItem = function(tabitemid){
+      return $http({
+          method: 'GET',
+          url: 'http://192.168.1.189:8080/addquantity?id='+tabitemid
+      });
+    }
+
+    removeQuantityTabItem = function(tabitemid){
+      return $http({
+
+          method: 'GET',
+          url: 'http://192.168.1.189:8080/removequantity?id='+tabitemid
+      });
     }
 
     return{
@@ -174,6 +189,10 @@ angular.module('starter.services', [])
       getAllTabs: getAllTabs,
       getTabItems: getTabItems,
       deleteTabItem: deleteTabItem,
+      addQuantityTabItem : addQuantityTabItem,
+      removeQuantityTabItem : removeQuantityTabItem,
 
     }
   });
+
+// 10.0.0.24:8080 IP SMoKE

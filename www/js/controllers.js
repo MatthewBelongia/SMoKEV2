@@ -1,10 +1,12 @@
 angular.module('starter.controllers', [])
-
-.controller('InventoryCtrl', function($scope, $stateParams, OpenTabsFactory, $http, SMoKEAPIservice) {
+/*
+.controller('InventoryCtrl', function($scope, $stateParams, OpenTabsFactory, $http, SMoKEAPIservice,$location,$state,$timeout) {
+  
   $scope.inventory = [];
   $http.get('/inventory.json').then(function(response) {
     $scope.inventory = response.data;
   });
+  
   // $scope.id = $stateParams.id;
   //   $scope.items = [];
   //   $scope.item = null;
@@ -13,19 +15,27 @@ angular.module('starter.controllers', [])
   //       $scope.item = response.data;
   //       console.log("other test");
   //   });
+  window.onerror = function (errorMsg, url, lineNumber) {
+         alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber);
+    }
 })
+*/
 
-
-.controller('OpenTabCtrl', function($scope, $location,OpenTabsFactory, $ionicPopup, $http, $ionicModal,ScannedItemService,SMoKEAPIservice,SharedParametersService) {
+.controller('OpenTabCtrl', function($scope, $location,OpenTabsFactory, $ionicPopup, $http, $ionicModal,ScannedItemService,SMoKEAPIservice,SharedParametersService,$state,$timeout) {
   
-  $scope.nameFilter =null;
+  window.onerror = function (errorMsg, url, lineNumber) {
+         alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber);
+    }
+  $scope.nameFilter ={};
   $scope.tabList = [];
+  //$scope.newTabFilter = null;
   //$scope.tempList = [];
   
   SMoKEAPIservice.getAllTabs().success(function(response){
       $scope.tabList = response;
       console.log(response);
   });
+  
 /*
   $scope.searchFilter = function (tab) {
     var re = new RegExp($scope.nameFilter, 'i');
@@ -40,6 +50,10 @@ angular.module('starter.controllers', [])
 
   }
 
+  console.log(SharedParametersService.getFilter());
+  $scope.nameFilter.text = SharedParametersService.getFilter();
+  //$scope.newTabFilter = SharedParametersService.getFilter();
+
   //window.onload = $scope.updateTabs();
   /*
   angular.element(document).ready(function (){
@@ -52,13 +66,68 @@ angular.module('starter.controllers', [])
     console.log("viewContentLoaded");
 });
 */
-  $scope.$on('$stateChangeSuccess', function () {
-    console.log("stateChangeSuccess");
-    $scope.updateTabs();
-    console.log(SharedParametersService.getFilter());
-    $scope.nameFilter = SharedParametersService.getFilter();
-    
+/*
+$scope.$watch('nameFilter', function(newValue, oldValue) {
+
+  console.log("oldValue" + oldValue);
+  console.log("newValue" + newValue);
+  console.log("nameFilter was changed");
+  document.getElementById("searchtabs").value = SharedParametersService.getFilter();
+  $scope.nameFilter.text = SharedParametersService.getFilter();
+  $timeout(function(){
+    $scope.$apply();
+
+  })
+  //update the DOM with newValue
 });
+*/
+  $scope.$on('$stateChangeSuccess', function () {
+    if($state.current.url == "/opentabs"){
+    console.log("stateChangeSuccess");
+    
+    $scope.updateTabs();
+    
+    //document.getElementById("searchtabs").value = null;
+    //console.log(SharedParametersService.getFilter());
+    //$scope.nameFilter.text = SharedParametersService.getFilter();
+    /*
+    $timeout(function(){
+      console.log("testing async model update");
+      document.getElementById("searchtabs").value = SharedParametersService.getFilter();
+      $scope.applyModelSynchronously();
+      $scope.$apply($scope.nameFilter);
+      
+      $scope.nameFilter = SharedParametersService.getFilter();
+      console.log($scope.nameFilter);
+    $scope.$apply();
+    
+
+    })
+    //$scope.newTabFilter = SharedParametersService.getFilter();
+    */
+    }
+});
+
+
+ function editModel() {
+  $scope.nameFilter.text = SharedParametersService.getFilter();
+  /* Do not apply your scope here since we don't know if that
+     function is called synchronously from Angular or from an
+     asynchronous code */
+}
+
+// Processed by Angular, for instance called by a ng-click directive
+$scope.applyModelSynchronously = function() {
+  // No need to digest
+  editModel();
+}
+
+// Any kind of asynchronous code, for instance a server request
+//callServer(function() {
+  /* That code is not watched nor digested by Angular, thus we
+     can safely $apply it */
+ // $scope.$apply(editModel);
+//}); 
 /*
   $scope.$on('$routeChangeSuccess', function () {
     console.log("routeChangeSuccess");
@@ -66,8 +135,21 @@ angular.module('starter.controllers', [])
 */
   $scope.go = function ( path ) {
     $location.path( path );
+    //$state.go('path');
   };
+/*
+  $scope.mobilego = function( path ){
+    //alert('mobilego');
+    //$state.go('tab.opentabs-locations');
+    //$location.url('/tab/locations');
+    $timeout(function(){
+      $scope.$apply(function() {
+     $location.url('/tab/locations').replace();
+    });
 
+   })
+  }
+*/
   $scope.changeTabID = function(tab){
 
     
@@ -182,6 +264,39 @@ angular.module('starter.controllers', [])
         
   };
 */
+
+
+
+  $scope.askForLocation = function(){
+
+    //cordova.plugins.Keyboard.disableScroll(false);
+
+    var myCardPopup = $ionicPopup.show({
+
+
+      template: '<input type="text" id="seatEntry" ng-model="seat"  autofocus/>',
+      title: 'Scan or Type Seat',
+      scope: $scope,
+      cssClass: 'my-custom-popup',
+      buttons: [
+      { text: 'Cancel' },
+      {
+        text: '<b>Ok</b>',
+        type: 'button-positive',
+
+        onTap: function(e) {
+              
+              var seat = document.getElementById("seatEntry").value;
+              console.log("seat " + seat);
+              SharedParametersService.setLocation(seat);
+              console.log(SharedParametersService.getLocation());
+              $scope.askForCard();
+                    
+            }
+          }
+          ]
+        });                
+  };
   
   $scope.askForCard = function(){
 
@@ -190,8 +305,9 @@ angular.module('starter.controllers', [])
 
 
       template: '<input type="text" id="cardEntry" ng-model="card"  autofocus/>',
-      title: 'Enter Card Type',
+      title: 'Enter Card Description',
       scope: $scope,
+      cssClass: 'my-custom-popup',
       buttons: [
       { text: 'Cancel' },
       {
@@ -205,9 +321,11 @@ angular.module('starter.controllers', [])
               SharedParametersService.setCard(card);
               console.log(SharedParametersService.getCard());
               console.log("card after " + card);
-              $scope.askForLocation();
-
-          
+              //$scope.askForLocation();
+              SMoKEAPIservice.getAllTabs().success(function(response){
+                    $scope.newTab();
+                 });
+    
             }
           }
           ]
@@ -216,12 +334,78 @@ angular.module('starter.controllers', [])
         });                
   };
 
+  $scope.newTab = function(){
+
+          var currlocation = SharedParametersService.getLocation();
+          console.log("location is" + currlocation);
+          //var pin = document.getElementById("pinEntry").value;
+          var pin = 1111;
+          SMoKEAPIservice.getUserDetails(pin).then(function successCallback(response) {
+          //Digging into the response to get the relevant data
+          $scope.user = response;
+          console.log(response);
+          try{
+          if($scope.user.data.firstname.length != 0){
+            console.log($scope.user.data.employeeid);
+            console.log("user found");
+
+            
+
+
+            var tzOffset = (new Date()).getTimezoneOffset() * 60000;
+            var date = (new Date(Date.now() - tzOffset)).toISOString().replace(/z|t/gi,' ').replace(/\.[^.]*$/,'');  
+            SMoKEAPIservice.addTab($scope.user.data.employeeid,$scope.user.data.firstname,currlocation,SharedParametersService.getCard(),0,date).
+            then(function successCallback(response){
+            console.log(response);
+            
+            
+            SMoKEAPIservice.getAllTabs().success(function(response){
+              
+              $scope.tempList = response;
+              //console.log("sort this: " + $scope.tempList);
+              var latestid = $scope.tempList.slice(-1)[0].id;
+              console.log(latestid);
+              //document.getElementById("searchtabs").value = latestid;
+
+              //$scope.go("/tab/opentabs");
+              SharedParametersService.setFilter(latestid);
+
+              SharedParametersService.setCurrentEmployee($scope.user.data.employeeid);
+              SharedParametersService.setEmpName($scope.user.data.firstname);
+              SharedParametersService.setCurrentTabID(latestid);
+
+              console.log("empid: " + SharedParametersService.getCurrentEmployee());
+              console.log("name: " + SharedParametersService.getEmpName());
+
+              //cordova.plugins.Keyboard.disableScroll(true);
+              
+              $scope.go("/tab/opentabs/"+latestid);
+
+            });
+            
+          })
+
+
+            //$scope.showPopup();
+            }
+          }catch(err){
+            //alert("PIN not found");
+            console.log("no user found");
+            $scope.askForPIN();
+          }
+          
+        }, function errorCallback(response) {})             
+              return pin;
+   }
+
+  
+
 
   $scope.askForPINlite = function(tab){
 
     //var location = $scope.askForLocation();
-    var location = SharedParametersService.getLocation();
-    console.log("location is" + location);
+    var seat = SharedParametersService.getLocation();
+    console.log("location is" + seat);
 
     SharedParametersService.setCurrentTabID(tab.id);
    
@@ -233,6 +417,7 @@ angular.module('starter.controllers', [])
       template: '<input type="tel" id="pinliteEntry" ng-model="pinlite"  autofocus/>',
       title: 'Enter PIN',
       scope: $scope,
+      cssClass: 'my-custom-popup',
       buttons: [
       { text: 'Cancel' },
       {
@@ -276,8 +461,8 @@ angular.module('starter.controllers', [])
   $scope.askForPIN = function(){
 
     //var location = $scope.askForLocation();
-    var location = SharedParametersService.getLocation();
-    console.log("location is" + location);
+    var seat = SharedParametersService.getLocation();
+    console.log("location is" + seat);
 
 
     var myPinPopup = $ionicPopup.show({
@@ -286,6 +471,7 @@ angular.module('starter.controllers', [])
       template: '<input type="tel" id="pinEntry" ng-model="pin"  autofocus/>',
       title: 'Enter PIN',
       scope: $scope,
+      cssClass: 'my-custom-popup',
       buttons: [
       { text: 'Cancel' },
       {
@@ -309,7 +495,7 @@ angular.module('starter.controllers', [])
 
             var tzOffset = (new Date()).getTimezoneOffset() * 60000;
             var date = (new Date(Date.now() - tzOffset)).toISOString().replace(/z|t/gi,' ').replace(/\.[^.]*$/,'');  
-            SMoKEAPIservice.addTab($scope.user.data.employeeid,$scope.user.data.firstname,location,SharedParametersService.getCard(),0,date).
+            SMoKEAPIservice.addTab($scope.user.data.employeeid,$scope.user.data.firstname,seat,SharedParametersService.getCard(),0,date).
             then(function successCallback(response){
             console.log(response);
             SMoKEAPIservice.getAllTabs().success(function(response){
@@ -355,17 +541,32 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('SpecialsCtrl', function($scope,$location,SharedParametersService,$ionicPopup,SMoKEAPIservice) {
-
+.controller('SpecialsCtrl', function($scope,$location,SharedParametersService,$ionicPopup,SMoKEAPIservice,$state,$timeout) {
+window.onerror = function (errorMsg, url, lineNumber) {
+         alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber);
+    }
   $scope.tempList = [];
 
   $scope.go = function ( path ) {
     $location.path( path );
+    //$state.go('path');
   };
 
+  $scope.mobilego = function( path ){
+    //alert('mobilego');
+    //$state.go('tab.opentabs-locations');
+    //$location.url('/tab/locations');
+    $timeout(function(){
+      $scope.$apply(function() {
+     $location.url('/tab/locations').replace();
+    });
 
-  $scope.askForCard = function(location){
-    SharedParametersService.setLocation(location);
+   })
+  }
+
+
+  $scope.askForCard = function(seat){
+    SharedParametersService.setLocation(seat);
     console.log(SharedParametersService.getLocation());
 
     var myCardPopup = $ionicPopup.show({
@@ -374,6 +575,7 @@ angular.module('starter.controllers', [])
       template: '<input type="text" id="cardEntry" ng-model="card"  autofocus/>',
       title: 'Enter Card Type',
       scope: $scope,
+      cssClass: 'my-custom-popup',
       buttons: [
       { text: 'Cancel' },
       {
@@ -398,8 +600,8 @@ angular.module('starter.controllers', [])
   $scope.askForPIN = function(){
 
     //var location = $scope.askForLocation();
-    var location = SharedParametersService.getLocation();
-    console.log("location is" + location);
+    var currlocation = SharedParametersService.getLocation();
+    console.log("location is" + currlocation);
 
 
     var myPinPopup = $ionicPopup.show({
@@ -408,6 +610,7 @@ angular.module('starter.controllers', [])
       template: '<input type="tel" id="pinEntry" ng-model="pin"  autofocus/>',
       title: 'Enter PIN',
       scope: $scope,
+      cssClass: 'my-custom-popup',
       buttons: [
       { text: 'Cancel' },
       {
@@ -431,7 +634,7 @@ angular.module('starter.controllers', [])
 
             var tzOffset = (new Date()).getTimezoneOffset() * 60000;
             var date = (new Date(Date.now() - tzOffset)).toISOString().replace(/z|t/gi,' ').replace(/\.[^.]*$/,'');  
-            SMoKEAPIservice.addTab($scope.user.data.employeeid,$scope.user.data.firstname,location,SharedParametersService.getCard(),0,date).
+            SMoKEAPIservice.addTab($scope.user.data.employeeid,$scope.user.data.firstname,currlocation,SharedParametersService.getCard(),0,date).
             then(function successCallback(response){
             console.log(response);
             
@@ -439,13 +642,22 @@ angular.module('starter.controllers', [])
             SMoKEAPIservice.getAllTabs().success(function(response){
               
               $scope.tempList = response;
-              console.log("sort this: " + $scope.tempList);
+              //console.log("sort this: " + $scope.tempList);
               var latestid = $scope.tempList.slice(-1)[0].id;
               console.log(latestid);
-              
-              $scope.go("/tab/opentabs");
               //document.getElementById("searchtabs").value = latestid;
+
+              //$scope.go("/tab/opentabs");
               SharedParametersService.setFilter(latestid);
+
+              SharedParametersService.setCurrentEmployee($scope.user.data.employeeid);
+              SharedParametersService.setEmpName($scope.user.data.firstname);
+              SharedParametersService.setCurrentTabID(latestid);
+
+              console.log("empid: " + SharedParametersService.getCurrentEmployee());
+              console.log("name: " + SharedParametersService.getEmpName());
+              
+              $scope.go("/tab/opentabs/"+latestid);
 
             });
             

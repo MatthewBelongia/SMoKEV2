@@ -2,7 +2,7 @@
   <ion-content class=body >
   <div id="currentEmployee"></div>
   <div class="item item-input-inset">
-      <button class="button button-balanced ion-plus button-block" ng-click="go('/tab/specials')">
+      <button class="button button-balanced ion-plus button-block" ng-click="askForLocation()">
         Open New Tab
       </button>
     </div>
@@ -14,7 +14,7 @@
     </div>
 
     -->
-  <input id="searchtabs" type="text" ng-model="nameFilter" placeholder="Search..."/>
+  <input id="searchtabs" type="text" ng-model="nameFilter.text" placeholder="Search..."/>
   <ion-list>
   <ion-item class="item item-divider">
         <div class="row">
@@ -23,7 +23,7 @@
           <div class="col col-25">Employee:</div>
         </div>
       </ion-item>
-    <ion-item ng-repeat="tab in tabList | filter: nameFilter" type="item-text-wrap" ng-click = "askForPINlite({{tab}})">
+    <ion-item ng-repeat="tab in tabList | filter: nameFilter.text" type="item-text-wrap" ng-click = "askForPINlite({{tab}})">
     <div class="row">
           <div class="col col-25">{{tab.id}}</div>
           <div class="col col-50">{{tab.location}}</div>
@@ -53,5 +53,11 @@
     </ion-list>
 
     -->
+    <br/>
+  <br/>
+  <br/>
   </ion-content>
+  <br/>
+  <br/>
+  <br/>
 </ion-view>

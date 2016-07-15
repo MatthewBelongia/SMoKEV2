@@ -26,6 +26,18 @@ angular.module('starter.controllers', [])
   window.onerror = function (errorMsg, url, lineNumber) {
          alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber);
     }
+/*
+    $scope.navLogout = function(){
+      alert("logout pressed");
+      $ionicNavBarDelegate.title('Login');
+      $state.go('login');
+
+    }
+
+    $scope.logout = function(){
+      $state.go('login');
+    }
+*/
   $scope.nameFilter ={};
   $scope.tabList = [];
   //$scope.newTabFilter = null;
@@ -398,6 +410,38 @@ $scope.applyModelSynchronously = function() {
               return pin;
    }
 
+   $scope.tabGo = function(tab){
+      SharedParametersService.setCurrentTabID(tab.id);
+
+       var pinlite = SharedParametersService.getCurrentPW();
+          SMoKEAPIservice.getUserDetails(pinlite).then(function successCallback(response) {
+          //Digging into the response to get the relevant data
+          $scope.user = response;
+          console.log(response);
+          try{
+          if($scope.user.data.firstname.length != 0){
+            console.log($scope.user.data.employeeid);
+            console.log("user found");
+            SharedParametersService.setCurrentEmployee($scope.user.data.employeeid);
+            SharedParametersService.setEmpName($scope.user.data.firstname);
+
+            console.log("empid: " + SharedParametersService.getCurrentEmployee());
+            console.log("name: " + SharedParametersService.getEmpName());
+
+            $scope.go("/tab/opentabs/{{tab.id}}");
+            //$scope.showPopup();
+            }
+          }catch(err){
+            //alert("PIN not found");
+            console.log("no user found");
+            console.log(err);
+            alert("error");
+          }
+          
+        }, function errorCallback(response) {})             
+              return pinlite;
+   }
+
   
 
 
@@ -447,7 +491,7 @@ $scope.applyModelSynchronously = function() {
           }catch(err){
             //alert("PIN not found");
             console.log("no user found");
-            $scope.askForPIN();
+            $scope.askForPINlite();
           }
           
         }, function errorCallback(response) {})             

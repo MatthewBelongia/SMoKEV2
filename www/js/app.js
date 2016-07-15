@@ -1,4 +1,4 @@
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'starter.billController', 'angularMoment'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'starter.billController', 'angularMoment', 'loginController','loginService'])
 
 .run(function($ionicPlatform) {
 
@@ -59,7 +59,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
             controller: 'BillCtrl'
           }
         }
-      })
+      })/*
       .state('tab.opentabs-locations', {
         url: '/locations',
         views: {
@@ -69,5 +69,14 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
           }
         }
       })
-    $urlRouterProvider.otherwise('/tab/opentabs');
+      */
+      .state('login', {
+                url: '/login',
+                
+                    templateUrl: 'templates/login.html',
+                    controller: 'LoginCtrl'
+
+
+            })
+    $urlRouterProvider.otherwise('/login');
   });

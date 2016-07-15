@@ -12,8 +12,9 @@
         Locations
       </button>
     </div>
-
+ <div><button ng-click="logout()"></button></div>
     -->
+   
   <input id="searchtabs" type="text" ng-model="nameFilter.text" placeholder="Search..."/>
   <ion-list>
   <ion-item class="item item-divider">
@@ -23,7 +24,7 @@
           <div class="col col-25">Employee:</div>
         </div>
       </ion-item>
-    <ion-item ng-repeat="tab in tabList | filter: nameFilter.text" type="item-text-wrap" ng-click = "askForPINlite({{tab}})">
+    <ion-item ng-repeat="tab in tabList | filter: nameFilter.text" type="item-text-wrap" ng-click="tabGo(tab)">
     <div class="row">
           <div class="col col-25">{{tab.id}}</div>
           <div class="col col-50">{{tab.location}}</div>

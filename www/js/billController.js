@@ -10,6 +10,12 @@ var h5m = (typeof html5Mode !== 'undefined') ? html5Mode : true;
 $locationProvider.html5Mode(h5m);
 alert(h5m);
 */
+/*
+$scope.logout = function(){
+      $state.go('login');
+    }
+
+    */
 
 $scope.alert = function(msg){
   alert(msg);

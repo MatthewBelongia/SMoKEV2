@@ -9,6 +9,7 @@ angular.module('starter.services', [])
   var card = "";
   var filter = "";
   var selectedItem = {};
+  var currentPW = "";
 
   
   return{
@@ -53,7 +54,13 @@ angular.module('starter.services', [])
     },
     setItem : function(value){
       selectedItem = value;
-    }
+    },
+    getCurrentPW : function(){
+      return currentPW;
+    },
+    setCurrentPW : function(value){
+      currentPW = value;
+    },
 
   };
 

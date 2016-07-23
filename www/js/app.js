@@ -1,4 +1,4 @@
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'starter.billController', 'angularMoment', 'loginController','loginService'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'starter.billController', 'angularMoment', 'loginController','loginService', 'smokeAPIService'])
 
 .run(function($ionicPlatform) {
 
